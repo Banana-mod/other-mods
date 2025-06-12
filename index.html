@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BananaMod other mods</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;700&display=swap');
+
+    body {
+      margin: 0;
+      font-family: 'Nunito Sans', sans-serif;
+      background-color: #ffffff;
+      color: #000000;
+    }
+
+    header {
+      background-color: #f7df4a;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    header img {
+      height: 32px;
+    }
+
+    header h1 {
+      font-size: 16px;
+      margin: 0;
+      font-weight: 700;
+    }
+
+    .content {
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .loading {
+      color: #666;
+      font-style: italic;
+    }
+
+    #results {
+      display: grid;
+      gap: 1rem;
+      max-width: 700px;
+      margin: 2rem auto;
+    }
+
+    .card {
+      background: #fef9c3;
+      border: 2px solid #facc15;
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .card a {
+      color: #92400e;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .card a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="https://banana-mod.github.io/favicon.ico" alt="BananaMod Logo">
+    <h1>Banana-mod other mods</h1>
+  </header>
+
+  <div class="content">
+    <div class="loading">Checking repositories...</div>
+    <div id="results"></div>
+  </div>
+
+  <script>
+    const urls = [
+      "https://api.github.com/repos/Snail-IDE/snail-ide.github.io/forks",
+      "https://api.github.com/repos/PenguinMod/penguinmod.github.io",
+      "https://api.github.com/repos/TurboWarp/scratch-gui",
+      "https://api.github.com/repos/scratchfoundation/scratch-gui"
+    ];
+
+    const resultsContainer = document.getElementById('results');
+    const loading = document.querySelector('.loading');
+
+    function addCard(url) {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `<a href="${url}" target="_blank">${url}</a>`;
+      resultsContainer.appendChild(card);
+    }
+
+    async function checkRepos() {
+      for (const url of urls) {
+        try {
+          const res = await fetch(url);
+          if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data)) {
+              data.forEach(repo => {
+                if (repo.html_url) addCard(repo.html_url);
+              });
+            } else if (data.html_url) {
+              addCard(data.html_url);
+            }
+          }
+        } catch (err) {
+          console.error('Error fetching:', url);
+        }
+      }
+      loading.style.display = 'none';
+    }
+
+    checkRepos();
+  </script>
+</body>
+</html>
